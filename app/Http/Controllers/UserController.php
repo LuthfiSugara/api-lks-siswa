@@ -6,8 +6,13 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use App\Helper\UserService;
 use App\models\User;
+use App\models\DetailGuru;
+use App\models\DetailSiswa;
+use App\models\DetailKelasUser;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+
 
 class UserController extends Controller
 {
@@ -22,23 +27,67 @@ class UserController extends Controller
             return ['status' => "fail", 'message' => 'Username sudah terdaftar'];
         }else{
             $foto = $request->foto;
-            $file_name = 'assets/images/example.png';
+            $file_name = '/assets/images/example.png';
             if ($foto) {
                 $file_name = '/assets/images/' . 'foto_profile_' . time() . '.' . $foto->getClientOriginalExtension();
                 $foto->move(public_path('/assets/images/'), $file_name);
             }
 
-            User::create([
-                'nama_lengkap' => $request->nama_lengkap,
-                'username' => $request->username,
-                'password' => bcrypt($request->password),
-                'tanggal_lahir' => $request->tanggal_lahir,
-                'foto' => $file_name,
-                'no_hp' => $request->no_hp,
-                'id_jenis_kelamin' => $request->id_jenis_kelamin,
-                'id_jabatan' => $request->id_jabatan,
-                'id_kelas' => $request->id_kelas,
-            ]);
+            $user = new User;
+            $user->nama = $request->nama;
+            $user->username = $request->username;
+            $user->password = bcrypt($request->password);
+            $user->tanggal_lahir = $request->tanggal_lahir;
+            $user->tempat_lahir = $request->tempat_lahir;
+            $user->foto = $file_name;
+            $user->no_hp = $request->no_hp;
+            $user->alamat = $request->alamat;
+            $user->id_jenis_kelamin = $request->id_jenis_kelamin;
+            $user->id_jabatan = $request->id_jabatan;
+            $user->id_mapel = $request->id_mapel;
+            $user->save();
+            // return $user->id;
+
+
+            if($request->id_jabatan == 2){
+                DB::table('detail_guru')->insert([
+                    'id_guru' => $user->id,
+                    'pendidikan_terakhir' => $request->pendidikan_terakhir,
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
+                ]);
+
+                // $tmpKelas = explode(",", $request->id_kelas);
+                for($i = 0; $i < count($request->id_kelas); $i++){
+                    DB::table('detail_kelas_user')->insert([
+                        'id_user' => $user->id,
+                        'id_kelas' => $request->id_kelas[$i],
+                        'id_jabatan' => $user->id_jabatan,
+                        'id_mapel' => $user->id_mapel,
+                        'created_at' => Carbon::now(),
+                        'updated_at' => Carbon::now(),
+                    ]);
+                }
+            }elseif($request->id_jabatan == 3){
+                DB::table('detail_siswa')->insert([
+                    'id_siswa' => $user->id,
+                    'nama_ayah' => $request->nama_ayah,
+                    'nama_ibu' => $request->nama_ibu,
+                    'pekerjaan_ayah' => $request->pekerjaan_ayah,
+                    'pekerjaan_ibu' => $request->pekerjaan_ibu,
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
+                ]);
+
+                DB::table('detail_kelas_user')->insert([
+                    'id_user' => $user->id,
+                    'id_kelas' => $request->id_kelas,
+                    'id_jabatan' => $user->id_jabatan,
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
+                ]);
+            }
+
             return ['status' => 'success', 'message' => 'Registrasi berhasil'];
         }
     }
@@ -47,7 +96,7 @@ class UserController extends Controller
         $user = User::
         with([
             'kelas' => function($q){
-                $q->select('id', 'name');
+                $q->select('id', 'id_user', 'id_kelas');
             },
             'jabatan' => function($q){
                 $q->select('id', 'name');
@@ -60,7 +109,7 @@ class UserController extends Controller
         ->first();
 
         if(!$user){
-            return ['status' => "fail", 'message' => 'Email atau Password Salah'];
+            return ['status' => "fail", 'message' => 'Username atau Password Salah'];
         }else{
             if($user && Hash::check($request->password, $user->password)){
                 $token = $user->createToken($request->device_name)->plainTextToken;
@@ -76,9 +125,6 @@ class UserController extends Controller
 
         $user = User::
         with([
-            'kelas' => function($q){
-                $q->select('id', 'name');
-            },
             'jabatan' => function($q){
                 $q->select('id', 'name');
             },
@@ -99,9 +145,9 @@ class UserController extends Controller
     public function detailUser($id){
         $user = User::
         with([
-            'kelas' => function($q){
-                $q->select('id', 'name');
-            },
+            // 'kelas' => function($q){
+            //     $q->select('id_user', 'id_kelas');
+            // },
             'jabatan' => function($q){
                 $q->select('id', 'name');
             },
@@ -125,58 +171,124 @@ class UserController extends Controller
     }
 
     public function editUser($id, Request $request){
-
         $user = User::where('id', $id)->first();
-        $file_name = $user->foto;
 
-        $validationUsername = User::whereNotIn('username', [$user->username])->get();
-        foreach($validationUsername as $value){
-            if(strtolower($value->username) === strtolower($request->username)){
+        $validateUsername = User::whereNotIn('username', [$user->username])->get();
+        foreach($validateUsername as $value){
+            if($value->username === $request->username){
                 return ['status' => "fail", 'message' => 'Username sudah digunakan'];
             }
         }
 
         $foto = $request->foto;
+        $file_name = $user->foto;
         if ($foto) {
             $file_name = '/assets/images/' . 'foto_profile_' . time() . '.' . $foto->getClientOriginalExtension();
             $foto->move(public_path('/assets/images/'), $file_name);
         }
 
-        $arrDate = explode("/", $request->tanggal_lahir);
-        if(strlen($arrDate[2]) >= 3){
-            $tanggal_lahir = $arrDate[2] . '/' . $arrDate[1] . '/' . $arrDate[0];
-        }else{
-            $tanggal_lahir = Carbon::parse($request->tanggal_lahir)->format('Y/m/d');
-        }
-
+        // $user = new User;
+        $user->nama = $request->nama;
+        $user->username = $request->username;
         if($request->password){
-            $user->nama_lengkap = $request->nama_lengkap;
-            $user->username = $request->username;
-            $user->password = $request->password;
-            $user->tanggal_lahir = $tanggal_lahir;
-            $user->foto = $file_name;
-            $user->no_hp = $request->no_hp;
-            $user->id_jenis_kelamin = $request->id_jenis_kelamin;
-            $user->id_jabatan = $request->id_jabatan;
-            $user->id_kelas = $request->id_kelas;
-            $user->save();
+            $user->password = bcrypt($request->password);
+        }
+        $user->tanggal_lahir = $request->tanggal_lahir;
+        $user->tempat_lahir = $request->tempat_lahir;
+        $user->foto = $file_name;
+        $user->no_hp = $request->no_hp;
+        $user->alamat = $request->alamat;
+        $user->id_jenis_kelamin = $request->id_jenis_kelamin;
+        $user->id_jabatan = $request->id_jabatan;
+        $user->id_mapel = $request->id_mapel;
+        $user->save();
 
-            return ['status' => 'success', 'message' => 'Berhasil Mengubah Data'];
-        }else{
-            $user->nama_lengkap = $request->nama_lengkap;
-            $user->username = $request->username;
-            $user->tanggal_lahir = $tanggal_lahir;
-            $user->foto = $file_name;
-            $user->no_hp = $request->no_hp;
-            $user->id_jenis_kelamin = $request->id_jenis_kelamin;
-            $user->id_jabatan = $request->id_jabatan;
-            $user->id_kelas = $request->id_kelas;
-            $user->save();
 
-            return ['status' => 'success', 'message' => 'Berhasil Mengubah Data'];
+        if($request->id_jabatan == 2){
+            // DB::table('detail_guru')
+            // ->where('id_guru', $id)
+            // ->update([
+            //     'pendidikan_terakhir' => $request->pendidikan_terakhir,
+            //     'updated_at' => Carbon::now()
+            // ]);
+
+            DB::table('detail_kelas_user')->where('id_user', $id)->delete();
+
+            $tmpKelas = explode(",", $request->id_kelas);
+            for($i = 0; $i < count($tmpKelas); $i++){
+                DB::table('detail_kelas_user')->insert([
+                    'id_user' => $user->id,
+                    'id_kelas' => $tmpKelas[$i],
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
+                ]);
+            }
+        }elseif($request->id_jabatan == 3){
+            DB::table('detail_siswa')
+            ->where('id_siswa', $id)
+            ->update([
+                'nama_ayah' => $request->nama_ayah,
+                'nama_ibu' => $request->nama_ibu,
+                'pekerjaan_ayah' => $request->pekerjaan_ayah,
+                'pekerjaan_ibu' => $request->pekerjaan_ibu,
+                'updated_at' => Carbon::now(),
+            ]);
+
+            DB::table('detail_kelas_user')
+            ->where('id_user', $id)
+            ->update([
+                'id_kelas' => $request->id_kelas,
+                'updated_at' => Carbon::now(),
+            ]);
         }
 
+        return ['status' => 'success', 'message' => 'Success'];
+    }
 
+    public function getAllAdmin(){
+        $admin = User::where('id_jabatan', 1)->get();
+
+        if($admin){
+            return ['status' => 'success', 'data' => $admin, 'message' => 'Success'];
+        }else{
+            return ['status' => 'fail', 'message' => 'Failed'];
+        }
+    }
+
+    public function getAllGuru(){
+        $guru = User::where('id_jabatan', 2)->get();
+
+        if($guru){
+            return ['status' => 'success', 'data' => $guru, 'message' => 'Success'];
+        }else{
+            return ['status' => 'fail', 'message' => 'Failed'];
+        }
+    }
+
+    public function getAllSiswa(){
+        $siswa = User::where('id_jabatan', 3)->get();
+
+        if($siswa){
+            return ['status' => 'success', 'data' => $siswa, 'message' => 'Success'];
+        }else{
+            return ['status' => 'fail', 'message' => 'Failed'];
+        }
+    }
+
+    public function getTeacherByClassId(Request $request, $idKelas, $idMapel){
+        $guru = DetailKelasUser::with([
+            'user' => function($q){
+                $q->select('id', 'nama');
+            }
+        ])
+        ->where([
+            'id_kelas' => $idKelas,
+            'id_mapel' => $idMapel,
+            'id_jabatan' => 2,
+        ])
+        ->get();
+
+        return ['status' => 'success', 'data' => $guru, 'message' => 'Success'];
     }
 }
 

@@ -16,10 +16,10 @@ class JenisKelaminSeeder extends Seeder
     {
         $jenis_kelamin = [
             [
-                'name' => 'Pria'
+                'name' => 'Laki-laki'
             ],
             [
-                'name' => 'Wanita'
+                'name' => 'Perempuan'
             ]
         ];
 

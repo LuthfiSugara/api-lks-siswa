@@ -20,15 +20,18 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'nama_lengkap',
+        'id',
+        'nama',
         'username',
         'password',
+        'tempat_lahir',
         'tanggal_lahir',
+        'alamat',
         'foto',
         'no_hp',
         'id_jenis_kelamin',
         'id_jabatan',
-        'id_kelas',
+        'id_mapel',
     ];
 
     /**
@@ -51,7 +54,7 @@ class User extends Authenticatable
     ];
 
     public function kelas(){
-        return $this->belongsTo(Kelas::class, 'id_kelas', 'id');
+        return $this->belongsTo(DetailKelasUser::class, 'id_user', 'id');
     }
 
     public function jabatan(){
@@ -62,8 +65,12 @@ class User extends Authenticatable
         return $this->belongsTo(JenisKelamin::class, 'id_jenis_kelamin', 'id');
     }
 
-    public function getTanggalLahirAttribute($value) {
-        return \Carbon\Carbon::parse($value)->format('d/m/Y');
+    public function pendidikan(){
+        return $this->belongsTo(DetailGuru::class, 'id', 'id_guru');
     }
+
+    // public function getTanggalLahirAttribute($value) {
+    //     return \Carbon\Carbon::parse($value)->format('d/m/Y');
+    // }
 
 }

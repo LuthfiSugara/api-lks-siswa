@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             JabatanSeeder::class,
             JenisKelaminSeeder::class,
             KelasSeeder::class,
+            MataPelajaranSeeder::class,
             UserSeeder::class,
         ]);
     }

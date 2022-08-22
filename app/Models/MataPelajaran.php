@@ -4,15 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
-
-class Jabatan extends Model
+class MataPelajaran extends Model
 {
     use HasFactory;
-    use SoftDeletes;
-
-    protected $table = 'jabatan';
+    protected $table = 'mata_pelajaran';
     protected $parimaryKey = 'id';
 
     protected $fillable = [

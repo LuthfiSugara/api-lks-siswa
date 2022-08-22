@@ -13,4 +13,8 @@ class Kelas extends Model
 
     protected $table = 'kelas';
     protected $parimaryKey = 'id';
+
+    protected $fillable = [
+        'name'
+    ];
 }

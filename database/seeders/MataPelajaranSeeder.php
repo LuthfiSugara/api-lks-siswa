@@ -3,9 +3,9 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\models\Jabatan;
+use App\models\MataPelajaran;
 
-class JabatanSeeder extends Seeder
+class MataPelajaranSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,21 +14,20 @@ class JabatanSeeder extends Seeder
      */
     public function run()
     {
-        $jabatan = [
+        $mapel = [
             [
-                'name' => 'Admin'
+                'name' => 'Matematika'
             ],
             [
-                'name' => 'Guru'
+                'name' => 'Bahasa Indonesia'
             ],
             [
-                'name' => 'Siswa'
+                'name' => 'Fisika'
             ]
         ];
 
-        foreach($jabatan as $value){
-            Jabatan::create($value);
+        foreach($mapel as $value){
+            MataPelajaran::create($value);
         }
-
     }
 }

@@ -4,18 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
-
-class Jabatan extends Model
+class DetailGuru extends Model
 {
     use HasFactory;
-    use SoftDeletes;
 
-    protected $table = 'jabatan';
+    protected $table = 'detail_guru';
     protected $parimaryKey = 'id';
 
     protected $fillable = [
-        'name'
+        'id_guru',
+        'pendidikan_terakhir',
     ];
 }
