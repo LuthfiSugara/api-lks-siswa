@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\MateriController;
+use App\Http\Controllers\ClassController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,11 +30,12 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     Route::get('all-guru', [UserController::class, 'getAllGuru']);
     Route::get('all-siswa', [UserController::class, 'getAllSiswa']);
 
-    Route::get('get-teacher-by-class-id/{idKelas}/{idMapel}', [UserController::class, 'getTeacherByClassId']);
+    // Route::get('get-teacher-by-class-id/{idKelas}/{idMapel}', [UserController::class, 'getTeacherByClassId']);
 
     Route::get('kelas', [SettingController::class, 'kelas']);
     Route::post('add-kelas', [SettingController::class, 'addKelas']);
     Route::post('edit-kelas/{id}', [SettingController::class, 'editKelas']);
+    Route::get('get-class-by-teacher-id/{id}', [ClassController::class, 'getCLassByTeacherId']);
 
     Route::get('jenis-kelamin', [SettingController::class, 'jenisKelamin']);
 

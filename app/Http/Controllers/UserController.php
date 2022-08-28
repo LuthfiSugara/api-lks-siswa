@@ -46,7 +46,6 @@ class UserController extends Controller
             $user->id_jabatan = $request->id_jabatan;
             $user->id_mapel = $request->id_mapel;
             $user->save();
-            // return $user->id;
 
 
             if($request->id_jabatan == 2){
@@ -57,11 +56,15 @@ class UserController extends Controller
                     'updated_at' => Carbon::now(),
                 ]);
 
-                // $tmpKelas = explode(",", $request->id_kelas);
-                for($i = 0; $i < count($request->id_kelas); $i++){
+                $arrKelas = $request->id_kelas;
+                if(!is_array($request->id_kelas)){
+                    $arrKelas = explode(",", $request->id_kelas);
+                }
+
+                for($i = 0; $i < count($arrKelas); $i++){
                     DB::table('detail_kelas_user')->insert([
                         'id_user' => $user->id,
-                        'id_kelas' => $request->id_kelas[$i],
+                        'id_kelas' => $arrKelas[$i],
                         'id_jabatan' => $user->id_jabatan,
                         'id_mapel' => $user->id_mapel,
                         'created_at' => Carbon::now(),
@@ -145,13 +148,19 @@ class UserController extends Controller
     public function detailUser($id){
         $user = User::
         with([
-            // 'kelas' => function($q){
-            //     $q->select('id_user', 'id_kelas');
-            // },
+            'kelas' => function($q){
+                $q->with(['detail:id,name'])->select('id_user', 'id_kelas');
+            },
             'jabatan' => function($q){
                 $q->select('id', 'name');
             },
             'jenis_kelamin' => function($q){
+                $q->select('id', 'name');
+            },
+            'pendidikan' => function($q){
+                $q->select('id', 'id_guru', 'pendidikan_terakhir');
+            },
+            'mapel' => function($q){
                 $q->select('id', 'name');
             }
         ])
@@ -187,7 +196,6 @@ class UserController extends Controller
             $foto->move(public_path('/assets/images/'), $file_name);
         }
 
-        // $user = new User;
         $user->nama = $request->nama;
         $user->username = $request->username;
         if($request->password){
@@ -199,31 +207,35 @@ class UserController extends Controller
         $user->no_hp = $request->no_hp;
         $user->alamat = $request->alamat;
         $user->id_jenis_kelamin = $request->id_jenis_kelamin;
-        $user->id_jabatan = $request->id_jabatan;
         $user->id_mapel = $request->id_mapel;
         $user->save();
 
 
-        if($request->id_jabatan == 2){
-            // DB::table('detail_guru')
-            // ->where('id_guru', $id)
-            // ->update([
-            //     'pendidikan_terakhir' => $request->pendidikan_terakhir,
-            //     'updated_at' => Carbon::now()
-            // ]);
+        if($user->id_jabatan == 2){
+            DB::table('detail_guru')
+            ->where('id_guru', $id)
+            ->update([
+                'pendidikan_terakhir' => $request->pendidikan_terakhir,
+                'updated_at' => Carbon::now()
+            ]);
 
             DB::table('detail_kelas_user')->where('id_user', $id)->delete();
 
-            $tmpKelas = explode(",", $request->id_kelas);
-            for($i = 0; $i < count($tmpKelas); $i++){
+            $arrKelas = $request->id_kelas;
+            if(!is_array($request->id_kelas)){
+                $arrKelas = explode(",", $request->id_kelas);
+            }
+
+            for($i = 0; $i < count($arrKelas); $i++){
                 DB::table('detail_kelas_user')->insert([
                     'id_user' => $user->id,
-                    'id_kelas' => $tmpKelas[$i],
+                    'id_kelas' => $arrKelas[$i],
+                    'id_jabatan' => $user->id_jabatan,
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now(),
                 ]);
             }
-        }elseif($request->id_jabatan == 3){
+        }elseif($user->id_jabatan == 3){
             DB::table('detail_siswa')
             ->where('id_siswa', $id)
             ->update([

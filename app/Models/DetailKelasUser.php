@@ -21,4 +21,8 @@ class DetailKelasUser extends Model
     public function user(){
         return $this->belongsTo(User::class, 'id_user', 'id');
     }
+
+    public function detail(){
+        return $this->belongsTo(Kelas::class, 'id_kelas', 'id');
+    }
 }

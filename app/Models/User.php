@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Carbon\Carbon;
 
 class User extends Authenticatable
 {
@@ -54,7 +55,7 @@ class User extends Authenticatable
     ];
 
     public function kelas(){
-        return $this->belongsTo(DetailKelasUser::class, 'id_user', 'id');
+        return $this->hasMany(DetailKelasUser::class, 'id_user', 'id');
     }
 
     public function jabatan(){
@@ -69,8 +70,16 @@ class User extends Authenticatable
         return $this->belongsTo(DetailGuru::class, 'id', 'id_guru');
     }
 
+    public function mapel(){
+        return $this->belongsTo(MataPelajaran::class, 'id_mapel', 'id');
+    }
+
     // public function getTanggalLahirAttribute($value) {
-    //     return \Carbon\Carbon::parse($value)->format('d/m/Y');
+    //     // return $value . ' 00:00:00';
+    //     $date = Carbon::createFromFormat('Y-m-d H:i:s', $value  . ' 00:00:00', 'Asia/Jakarta');
+    //     $date->setTimezone('UTC');
+    //     return $date;
     // }
+
 
 }
