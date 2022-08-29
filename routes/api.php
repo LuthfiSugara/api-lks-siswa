@@ -30,7 +30,7 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     Route::get('all-guru', [UserController::class, 'getAllGuru']);
     Route::get('all-siswa', [UserController::class, 'getAllSiswa']);
 
-    // Route::get('get-teacher-by-class-id/{idKelas}/{idMapel}', [UserController::class, 'getTeacherByClassId']);
+    Route::get('get-teacher-by-class-id/{idKelas}/{idMapel}', [UserController::class, 'getTeacherByClassId']);
 
     Route::get('kelas', [SettingController::class, 'kelas']);
     Route::post('add-kelas', [SettingController::class, 'addKelas']);

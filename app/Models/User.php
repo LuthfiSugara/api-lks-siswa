@@ -74,6 +74,10 @@ class User extends Authenticatable
         return $this->belongsTo(MataPelajaran::class, 'id_mapel', 'id');
     }
 
+    public function siswa(){
+        return $this->belongsTo(DetailSiswa::class, 'id', 'id_siswa');
+    }
+
     // public function getTanggalLahirAttribute($value) {
     //     // return $value . ' 00:00:00';
     //     $date = Carbon::createFromFormat('Y-m-d H:i:s', $value  . ' 00:00:00', 'Asia/Jakarta');

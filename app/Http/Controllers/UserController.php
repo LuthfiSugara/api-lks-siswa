@@ -44,7 +44,9 @@ class UserController extends Controller
             $user->alamat = $request->alamat;
             $user->id_jenis_kelamin = $request->id_jenis_kelamin;
             $user->id_jabatan = $request->id_jabatan;
-            $user->id_mapel = $request->id_mapel;
+            if($request->id_mapel){
+                $user->id_mapel = $request->id_mapel;
+            }
             $user->save();
 
 
@@ -162,6 +164,9 @@ class UserController extends Controller
             },
             'mapel' => function($q){
                 $q->select('id', 'name');
+            },
+            'siswa' => function($q){
+                $q->select('id_siswa', 'nama_ayah', 'nama_ibu', 'pekerjaan_ayah', 'pekerjaan_ibu');
             }
         ])
         ->where('id', $id)
