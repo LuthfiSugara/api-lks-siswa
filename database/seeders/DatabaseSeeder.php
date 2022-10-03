@@ -20,6 +20,8 @@ class DatabaseSeeder extends Seeder
             KelasSeeder::class,
             MataPelajaranSeeder::class,
             UserSeeder::class,
+            JenisSoalSeeder::class,
+            JenisUjianSeeder::class,
         ]);
     }
 }

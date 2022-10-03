@@ -18,6 +18,7 @@ class CreateDetailMateriTable extends Migration
             $table->string('name');
             $table->integer('id_materi');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

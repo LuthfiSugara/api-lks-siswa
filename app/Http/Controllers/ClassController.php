@@ -34,4 +34,14 @@ class ClassController extends Controller
             return ['status' => 'fail', 'message' => 'Failed'];
         }
     }
+
+    public function detailClass($id){
+        $detail = Kelas::where('id', $id)->first();
+
+        if($detail){
+            return ['status' => 'success', 'data' => $detail, 'message' => 'Success'];
+        }else{
+            return ['status' => 'fail', 'message' => 'Failed'];
+        }
+    }
 }

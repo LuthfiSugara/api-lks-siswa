@@ -21,4 +21,20 @@ class Materi extends Model
         'id_kelas',
         'id_guru',
     ];
+
+    public function mapel(){
+        return $this->belongsTo(MataPelajaran::class, 'id_mapel', 'id');
+    }
+
+    public function kelas(){
+        return $this->belongsTo(Kelas::class, 'id_kelas', 'id');
+    }
+
+    public function guru(){
+        return $this->belongsTo(User::class, 'id_guru', 'id');
+    }
+
+    public function detail(){
+        return $this->hasMany(DetailMateri::class, 'id_materi', 'id');
+    }
 }

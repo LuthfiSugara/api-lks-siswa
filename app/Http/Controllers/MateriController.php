@@ -11,6 +11,56 @@ use Carbon\Carbon;
 
 class MateriController extends Controller
 {
+    public function getMateri(Request $request, $id_mapel, $id_kelas, $id_guru){
+        $materi = Materi::with([
+            'mapel' => function($q){
+                $q->select('id', 'name');
+            },
+            'kelas' => function($q){
+                $q->select('id', 'name');
+            },
+            'guru' => function($q){
+                $q->select('id', 'nama');
+            }
+        ])
+        ->orderBy('id', 'asc')->where([
+            'id_mapel' => $id_mapel,
+            'id_kelas' => $id_kelas,
+            'id_guru' => $id_guru,
+        ])->get();
+
+        if($materi){
+            return ['status' => "success", 'data' => $materi, 'message' => 'Success'];
+        }else{
+            return ['status' => "fail", 'message' => 'Failed'];
+        }
+    }
+
+    public function detailMateri(Request $reques, $id_materi){
+        $materi = Materi::with([
+            'mapel' => function($q){
+                $q->select('id', 'name');
+            },
+            'kelas' => function($q){
+                $q->select('id', 'name');
+            },
+            'guru' => function($q){
+                $q->select('id', 'nama');
+            },
+            'detail' => function($q){
+                $q->select('id', 'name', 'id_materi');
+            }
+        ])
+        ->orderBy('id', 'asc')
+        ->where('id', $id_materi)->first();
+
+        if($materi){
+            return ['status' => "success", 'data' => $materi, 'message' => 'Success'];
+        }else{
+            return ['status' => "fail", 'message' => 'Failed'];
+        }
+    }
+
     public function addMateri(Request $request){
         $materi = new Materi;
         $materi->judul = $request->judul;
@@ -24,16 +74,51 @@ class MateriController extends Controller
             $mapel = MataPelajaran::where('id', $request->id_mapel)->first();
             $j = 0;
             foreach($request->file as $value){
-                $file_name = '/assets/materi/' . $mapel->name . '-' . $materi->judul . '-' . time() . '.' . $request->file[$j]->getClientOriginalExtension();
-                $request->file[$j]->move(public_path('/assets/materi/'), $file_name);
+                $file_name = '/assets/materi/' . $mapel->name . '-' . $materi->judul . '-' . $j . '-' . time() . '.' . $value->getClientOriginalExtension();
+                $value->move(public_path('/assets/materi/'), $file_name);
 
-                DetailMateri::create([
-                    'name' => $file_name,
-                    'id_materi' => $materi->id,
-                ]);
+                $detail = new DetailMateri;
+                $detail->name = $file_name;
+                $detail->id_materi = $materi->id;
+                $detail->save();
+
                 $j++;
             }
         }
         return ['status' => "success", 'message' => 'Success'];
+    }
+
+    public function updateMateri(Request $request, $id){
+        $materi = Materi::where('id', $id)->first();
+        $materi->judul = $request->judul;
+        $materi->keterangan = $request->keterangan;
+        $materi->save();
+
+        if ($request->file) {
+            $mapel = MataPelajaran::where('id', $materi->id_mapel)->first();
+            $j = 0;
+            foreach($request->file as $value){
+                $file_name = '/assets/materi/' . $mapel->name . '-' . $materi->judul . '-' . $j . '-' . time() . '.' . $value->getClientOriginalExtension();
+                $value->move(public_path('/assets/materi/'), $file_name);
+
+                $detail = new DetailMateri;
+                $detail->name = $file_name;
+                $detail->id_materi = $materi->id;
+                $detail->save();
+
+                $j++;
+            }
+        }
+        return ['status' => "success", 'message' => 'Success'];
+    }
+
+    public function deleteDetailFileMateri($id){
+        $delete = DetailMateri::where('id', $id)->delete();
+
+        if($delete){
+            return ['status' => "success", 'message' => 'Success'];
+        }else{
+            return ['status' => "fail", 'message' => 'Failed'];
+        }
     }
 }

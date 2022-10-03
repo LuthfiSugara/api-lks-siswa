@@ -51,12 +51,10 @@ class UserController extends Controller
 
 
             if($request->id_jabatan == 2){
-                DB::table('detail_guru')->insert([
-                    'id_guru' => $user->id,
-                    'pendidikan_terakhir' => $request->pendidikan_terakhir,
-                    'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now(),
-                ]);
+                $detail = new DetailGuru;
+                $detail->id_guru = $user->id;
+                $detail->pendidikan_terakhir = $request->pendidikan_terakhir;
+                $detail->save();
 
                 $arrKelas = $request->id_kelas;
                 if(!is_array($request->id_kelas)){
@@ -64,33 +62,27 @@ class UserController extends Controller
                 }
 
                 for($i = 0; $i < count($arrKelas); $i++){
-                    DB::table('detail_kelas_user')->insert([
-                        'id_user' => $user->id,
-                        'id_kelas' => $arrKelas[$i],
-                        'id_jabatan' => $user->id_jabatan,
-                        'id_mapel' => $user->id_mapel,
-                        'created_at' => Carbon::now(),
-                        'updated_at' => Carbon::now(),
-                    ]);
+                    $kelas = new DetailKelasUser();
+                    $kelas->id_user = $user->id;
+                    $kelas->id_kelas = $arrKelas[$i];
+                    $kelas->id_jabatan = $user->id_jabatan;
+                    $kelas->id_mapel = $user->id_mapel;
+                    $kelas->save();
                 }
             }elseif($request->id_jabatan == 3){
-                DB::table('detail_siswa')->insert([
-                    'id_siswa' => $user->id,
-                    'nama_ayah' => $request->nama_ayah,
-                    'nama_ibu' => $request->nama_ibu,
-                    'pekerjaan_ayah' => $request->pekerjaan_ayah,
-                    'pekerjaan_ibu' => $request->pekerjaan_ibu,
-                    'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now(),
-                ]);
+                $detail = new DetailSiswa;
+                $detail->id_siswa = $user->id;
+                $detail->nama_ayah = $request->nama_ayah;
+                $detail->nama_ibu = $request->nama_ibu;
+                $detail->pekerjaan_ayah = $request->pekerjaan_ayah;
+                $detail->pekerjaan_ibu = $request->pekerjaan_ibu;
+                $detail->save();
 
-                DB::table('detail_kelas_user')->insert([
-                    'id_user' => $user->id,
-                    'id_kelas' => $request->id_kelas,
-                    'id_jabatan' => $user->id_jabatan,
-                    'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now(),
-                ]);
+                $kelas = new DetailKelasUser();
+                $kelas->id_user = $user->id;
+                $kelas->id_kelas = $request->id_kelas;
+                $kelas->id_jabatan = $user->id_jabatan;
+                $kelas->save();
             }
 
             return ['status' => 'success', 'message' => 'Registrasi berhasil'];
@@ -212,7 +204,6 @@ class UserController extends Controller
         $user->no_hp = $request->no_hp;
         $user->alamat = $request->alamat;
         $user->id_jenis_kelamin = $request->id_jenis_kelamin;
-        $user->id_mapel = $request->id_mapel;
         $user->save();
 
 
@@ -236,6 +227,7 @@ class UserController extends Controller
                     'id_user' => $user->id,
                     'id_kelas' => $arrKelas[$i],
                     'id_jabatan' => $user->id_jabatan,
+                    'id_mapel' => $user->id_mapel,
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now(),
                 ]);
@@ -273,7 +265,25 @@ class UserController extends Controller
     }
 
     public function getAllGuru(){
-        $guru = User::where('id_jabatan', 2)->get();
+        $guru = User::with([
+            'kelas' => function($q){
+                $q->with(['detail:id,name'])->select('id_user', 'id_kelas');
+            },
+            'jabatan' => function($q){
+                $q->select('id', 'name');
+            },
+            'jenis_kelamin' => function($q){
+                $q->select('id', 'name');
+            },
+            'pendidikan' => function($q){
+                $q->select('id', 'id_guru', 'pendidikan_terakhir');
+            },
+            'mapel' => function($q){
+                $q->select('id', 'name');
+            }
+        ])
+        ->where('id_jabatan', 2)
+        ->get();
 
         if($guru){
             return ['status' => 'success', 'data' => $guru, 'message' => 'Success'];
