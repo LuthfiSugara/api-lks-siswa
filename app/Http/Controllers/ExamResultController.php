@@ -112,4 +112,34 @@ class ExamResultController extends Controller
             return ['status' => 'fail', 'message' => 'Failed'];
         }
     }
+
+    public function updateDetailAnswer(Request $request){
+        $result = HasilUjian::where([
+            'id_ujian' => $request->id_ujian,
+            'id_siswa' => $request->id_siswa,
+            'id_soal' => $request->id_soal,
+        ])->first();
+        $result->koreksi_jawaban = $request->koreksi_jawaban;
+        $result->save();
+
+        if($result){
+            return ['status' => 'success', 'message' => 'Success'];
+        }else{
+            return ['status' => 'fail', 'message' => 'Failed'];
+        }
+    }
+    public function updateStudentScore(Request $request){
+        $score = NilaiSiswa::where([
+            'id_ujian' => $request->id_ujian,
+            'id_siswa' => $request->id_siswa,
+        ])->first();
+        $score->nilai = $request->nilai;
+        $score->save();
+
+        if($score){
+            return ['status' => 'success', 'message' => 'Success'];
+        }else{
+            return ['status' => 'fail', 'message' => 'Failed'];
+        }
+    }
 }

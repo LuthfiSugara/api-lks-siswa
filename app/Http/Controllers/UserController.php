@@ -139,7 +139,7 @@ class UserController extends Controller
         }
     }
 
-    public function detailUser($id){
+    public function detailUser(Request $request){
         $user = User::
         with([
             'kelas' => function($q){
@@ -161,7 +161,7 @@ class UserController extends Controller
                 $q->select('id_siswa', 'nama_ayah', 'nama_ibu', 'pekerjaan_ayah', 'pekerjaan_ibu');
             }
         ])
-        ->where('id', $id)
+        ->where('id', $request->id)
         ->first();
 
         if($user){

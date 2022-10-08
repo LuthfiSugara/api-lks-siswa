@@ -8,14 +8,15 @@ use App\models\DetailKelasUser;
 
 class ClassController extends Controller
 {
-    public function getCLassByTeacherId(Request $request, $id){
+    public function getCLassByTeacherId(Request $request){
         $kelas = DetailKelasUser::with([
             'detail' => function($q){
                 $q->select('id', 'name');
             }
         ])
-        ->where('id_user', $id)
+        ->where('id_user', $request->id)
         ->get();
+
         $arrKelas = [];
         $arrKelasName = [];
         foreach($kelas as $value){

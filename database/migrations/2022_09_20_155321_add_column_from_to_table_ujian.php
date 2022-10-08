@@ -14,8 +14,8 @@ class AddColumnFromToTableUjian extends Migration
     public function up()
     {
         Schema::table('ujian', function (Blueprint $table) {
-            $table->timestamp('to')->after('id_guru');
-            $table->timestamp('from')->after('id_guru');
+            $table->timestamp('to')->after('id_guru')->default(DB::raw('CURRENT_TIMESTAMP(0)'));
+            $table->timestamp('from')->after('id_guru')->default(DB::raw('CURRENT_TIMESTAMP(0)'));
         });
     }
 

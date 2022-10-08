@@ -25,7 +25,7 @@ Route::post('login', [UserController::class, 'login']);
 Route::group(['middleware' => ['auth:sanctum']], function() {
     Route::post('register', [UserController::class, 'register']);
     Route::get('profile', [UserController::class, 'profile']);
-    Route::get('detail-user/{id}', [UserController::class, 'detailUser']);
+    Route::get('detail-user', [UserController::class, 'detailUser']);
     Route::post('edit-user/{id}', [UserController::class, 'editUser']);
 
     Route::get('all-user', [UserController::class, 'getAllUser']);
@@ -38,7 +38,7 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     Route::get('kelas', [SettingController::class, 'kelas']);
     Route::post('add-kelas', [SettingController::class, 'addKelas']);
     Route::post('edit-kelas/{id}', [SettingController::class, 'editKelas']);
-    Route::get('get-class-by-teacher-id/{id}', [ClassController::class, 'getCLassByTeacherId']);
+    Route::get('get-class-by-teacher-id', [ClassController::class, 'getCLassByTeacherId']);
     Route::get('detail-kelas/{id}', [ClassController::class, 'detailClass']);
 
     Route::get('jenis-kelamin', [SettingController::class, 'jenisKelamin']);
@@ -80,6 +80,8 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     Route::get('correct-student-answer', [ExamResultController::class, 'correctStudentAnswer']);
     Route::get('detail-score', [ExamResultController::class, 'getDetailScore']);
     Route::get('detail-answer', [ExamResultController::class, 'getDetailAnswer']);
+    Route::post('update-detail-answer', [ExamResultController::class, 'updateDetailAnswer']);
+    Route::post('update-student-score', [ExamResultController::class, 'updateStudentScore']);
 
 });
 
