@@ -11,7 +11,7 @@ use Carbon\Carbon;
 
 class MateriController extends Controller
 {
-    public function getMateri(Request $request, $id_mapel, $id_kelas, $id_guru){
+    public function getMateri(Request $request){
         $materi = Materi::with([
             'mapel' => function($q){
                 $q->select('id', 'name');
@@ -24,9 +24,9 @@ class MateriController extends Controller
             }
         ])
         ->orderBy('id', 'asc')->where([
-            'id_mapel' => $id_mapel,
-            'id_kelas' => $id_kelas,
-            'id_guru' => $id_guru,
+            'id_mapel' => $request->id_mapel,
+            'id_kelas' => $request->id_kelas,
+            'id_guru' => $request->id_guru,
         ])->get();
 
         if($materi){
@@ -36,7 +36,7 @@ class MateriController extends Controller
         }
     }
 
-    public function detailMateri(Request $reques, $id_materi){
+    public function detailMateri(Request $request){
         $materi = Materi::with([
             'mapel' => function($q){
                 $q->select('id', 'name');
@@ -52,7 +52,8 @@ class MateriController extends Controller
             }
         ])
         ->orderBy('id', 'asc')
-        ->where('id', $id_materi)->first();
+        ->where('id', $request->id_materi)
+        ->first();
 
         if($materi){
             return ['status' => "success", 'data' => $materi, 'message' => 'Success'];
@@ -88,8 +89,8 @@ class MateriController extends Controller
         return ['status' => "success", 'message' => 'Success'];
     }
 
-    public function updateMateri(Request $request, $id){
-        $materi = Materi::where('id', $id)->first();
+    public function updateMateri(Request $request){
+        $materi = Materi::where('id', $request->id)->first();
         $materi->judul = $request->judul;
         $materi->keterangan = $request->keterangan;
         $materi->save();

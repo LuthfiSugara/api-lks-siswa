@@ -127,6 +127,13 @@ class UserController extends Controller
             },
             'jenis_kelamin' => function($q){
                 $q->select('id', 'name');
+            },
+            'kelas' => function($q){
+                $q->with([
+                    'detail' =>  function($q){
+                        $q->select('id', 'name');
+                    }
+                ])->select('id', 'id_user', 'id_kelas', 'id_jabatan');
             }
         ])
         ->where('id', $id)
@@ -176,8 +183,8 @@ class UserController extends Controller
         return ['status' => 'success', 'data' => $user, 'message' => 'Data berhasil didapat'];
     }
 
-    public function editUser($id, Request $request){
-        $user = User::where('id', $id)->first();
+    public function editUser(Request $request){
+        $user = User::where('id', $request->id)->first();
 
         $validateUsername = User::whereNotIn('username', [$user->username])->get();
         foreach($validateUsername as $value){
@@ -204,18 +211,21 @@ class UserController extends Controller
         $user->no_hp = $request->no_hp;
         $user->alamat = $request->alamat;
         $user->id_jenis_kelamin = $request->id_jenis_kelamin;
+        if($user->id_jabatan == 2){
+            $user->id_mapel = $request->id_mapel;
+        }
         $user->save();
 
 
         if($user->id_jabatan == 2){
             DB::table('detail_guru')
-            ->where('id_guru', $id)
+            ->where('id_guru', $request->id)
             ->update([
                 'pendidikan_terakhir' => $request->pendidikan_terakhir,
                 'updated_at' => Carbon::now()
             ]);
 
-            DB::table('detail_kelas_user')->where('id_user', $id)->delete();
+            DB::table('detail_kelas_user')->where('id_user', $request->id)->delete();
 
             $arrKelas = $request->id_kelas;
             if(!is_array($request->id_kelas)){
@@ -227,14 +237,14 @@ class UserController extends Controller
                     'id_user' => $user->id,
                     'id_kelas' => $arrKelas[$i],
                     'id_jabatan' => $user->id_jabatan,
-                    'id_mapel' => $user->id_mapel,
+                    'id_mapel' => $request->id_mapel,
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now(),
                 ]);
             }
         }elseif($user->id_jabatan == 3){
             DB::table('detail_siswa')
-            ->where('id_siswa', $id)
+            ->where('id_siswa', $request->id)
             ->update([
                 'nama_ayah' => $request->nama_ayah,
                 'nama_ibu' => $request->nama_ibu,
@@ -244,7 +254,7 @@ class UserController extends Controller
             ]);
 
             DB::table('detail_kelas_user')
-            ->where('id_user', $id)
+            ->where('id_user', $request->id)
             ->update([
                 'id_kelas' => $request->id_kelas,
                 'updated_at' => Carbon::now(),
@@ -293,7 +303,13 @@ class UserController extends Controller
     }
 
     public function getAllSiswa(){
-        $siswa = User::where('id_jabatan', 3)->get();
+        $siswa = User::with([
+            'kelas' => function($q){
+                $q->with(['detail:id,name'])->select('id_user', 'id_kelas');
+            },
+        ])
+        ->where('id_jabatan', 3)
+        ->get();
 
         if($siswa){
             return ['status' => 'success', 'data' => $siswa, 'message' => 'Success'];
@@ -302,15 +318,15 @@ class UserController extends Controller
         }
     }
 
-    public function getTeacherByClassId(Request $request, $idKelas, $idMapel){
+    public function getTeacherByClassId(Request $request){
         $guru = DetailKelasUser::with([
             'user' => function($q){
                 $q->select('id', 'nama');
             }
         ])
         ->where([
-            'id_kelas' => $idKelas,
-            'id_mapel' => $idMapel,
+            'id_kelas' => $request->id_kelas,
+            'id_mapel' => $request->id_mapel,
             'id_jabatan' => 2,
         ])
         ->get();

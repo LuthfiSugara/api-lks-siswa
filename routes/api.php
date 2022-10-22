@@ -26,14 +26,14 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     Route::post('register', [UserController::class, 'register']);
     Route::get('profile', [UserController::class, 'profile']);
     Route::get('detail-user', [UserController::class, 'detailUser']);
-    Route::post('edit-user/{id}', [UserController::class, 'editUser']);
+    Route::post('edit-user', [UserController::class, 'editUser']);
 
     Route::get('all-user', [UserController::class, 'getAllUser']);
     Route::get('all-admin', [UserController::class, 'getAllAdmin']);
     Route::get('all-guru', [UserController::class, 'getAllGuru']);
     Route::get('all-siswa', [UserController::class, 'getAllSiswa']);
 
-    Route::get('get-teacher-by-class-id/{idKelas}/{idMapel}', [UserController::class, 'getTeacherByClassId']);
+    Route::get('get-teacher-by-class-id', [UserController::class, 'getTeacherByClassId']);
 
     Route::get('kelas', [SettingController::class, 'kelas']);
     Route::post('add-kelas', [SettingController::class, 'addKelas']);
@@ -51,27 +51,27 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     Route::post('edit-mapel/{id}', [SettingController::class, 'editMataPelajaran']);
     Route::get('detail-mapel/{id}', [MapelController::class, 'detailMapel']);
 
-    Route::get('materi/{id_mapel}/{id_kelas}/{id_guru}', [MateriController::class, 'getMateri']);
-    Route::get('detail-materi/{id_materi}', [MateriController::class, 'detailMateri']);
+    Route::get('materi', [MateriController::class, 'getMateri']);
+    Route::get('detail-materi', [MateriController::class, 'detailMateri']);
     Route::post('add-materi', [MateriController::class, 'addMateri']);
     Route::get('delete-detail-file-materi/{id}', [MateriController::class, 'deleteDetailFileMateri']);
-    Route::post('update-materi/{id}', [MateriController::class, 'updateMateri']);
+    Route::post('update-materi', [MateriController::class, 'updateMateri']);
 
     Route::post('create-exam', [ExamController::class, 'createExam']);
     Route::get('detail-exam', [ExamController::class, 'detailExam']);
     Route::post('update-exam/{id}', [ExamController::class, 'updateExam']);
     Route::post('create-exam-questions', [ExamController::class, 'createExamQuestions']);
-    Route::get('get-exam-questions/{id}/{jenis_soal}', [ExamController::class, 'getExamQuestions']);
-    Route::get('get-all-exam-base-on-type/{type}/{id_mapel}/{id_kelas}/{id_guru}', [ExamController::class, 'getAllExamBaseOnType']);
+    Route::get('get-exam-questions', [ExamController::class, 'getExamQuestions']);
+    Route::get('get-all-exam-base-on-type', [ExamController::class, 'getAllExamBaseOnType']);
     Route::get('delete-exam/{id}', [ExamController::class, 'deleteExam']);
 
-    Route::get('detail-question/{id}', [ExamController::class, 'detailQuestion']);
+    Route::get('detail-question', [ExamController::class, 'detailQuestion']);
     Route::post('update-question/{id}', [ExamController::class, 'updateQuestion']);
     Route::get('delete-file-exam/{id}', [ExamController::class, 'deleteFileExam']);
 
     Route::post('create-exam-results', [ExamController::class, 'createExamResults']);
     Route::get('get-exam-results/{id_ujian}/{id_siswa}', [ExamController::class, 'getExamResults']);
-    Route::get('get-exam-results-answer/{id_siswa}/{id_ujian}/{id_soal}', [ExamController::class, 'getExamResultsAnswer']);
+    Route::get('get-exam-results-answer', [ExamController::class, 'getExamResultsAnswer']);
     Route::post('update-exam-results-answer/{id_siswa}/{id_ujian}/{id_soal}', [ExamController::class, 'updateExamResultsAnswer']);
 
     Route::get('student-score', [ExamResultController::class, 'getStudentScore']);

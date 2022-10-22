@@ -30,10 +30,13 @@ class ExamResultController extends Controller
                         $q->select('id', 'nama');
                     }
                 ])->select('id_ujian', 'id_siswa', 'nilai',);
+            },
+            'mapel' => function($q){
+                $q->select('id', 'name');
             }
         ])
         ->where('id', $request->id_ujian)
-        ->first();
+        ->get();
 
         if($ujian){
             return ['status' => 'success', 'data' => $ujian, 'message' => 'Success'];

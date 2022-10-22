@@ -30,7 +30,7 @@ class ExamController extends Controller
     }
 
     public function detailExam(Request $request){
-        $ujian = Ujian::where('id', $request->id)->first();
+        $ujian = Ujian::where('id', $request->id)->get();
 
         if($ujian){
             return ['status' => 'success', 'data' => $ujian, 'message' => 'Success'];
@@ -100,7 +100,7 @@ class ExamController extends Controller
         }
     }
 
-    public function getAllExamBaseOnType($type, $id_mapel, $id_kelas, $id_guru){
+    public function getAllExamBaseOnType(Request $request){
         $exams = new Ujian();
         $exams = $exams->with([
             'kelas' => function($q){
@@ -114,18 +114,18 @@ class ExamController extends Controller
             },
         ])
         ->orderBy('created_at', 'asc')
-        ->where('id_jenis_ujian', $type);
+        ->where('id_jenis_ujian', $request->type);
 
-        if($id_mapel != "All"){
-            $exams = $exams->where('id_mapel', $id_mapel);
+        if($request->id_mapel != "All"){
+            $exams = $exams->where('id_mapel', $request->id_mapel);
         }
 
-        if($id_kelas != "All"){
-            $exams = $exams->where('id_kelas', $id_kelas);
+        if($request->id_kelas != "All"){
+            $exams = $exams->where('id_kelas', $request->id_kelas);
         }
 
-        if($id_guru != "All"){
-            $exams = $exams->where('id_guru', $id_guru);
+        if($request->id_guru != "All"){
+            $exams = $exams->where('id_guru', $request->id_guru);
         }
 
         $exams = $exams->get();
@@ -137,7 +137,7 @@ class ExamController extends Controller
         }
     }
 
-    public function getExamQuestions($id, $jenis_soal){
+    public function getExamQuestions(Request $request){
         $questions = Soal::with([
             'ujian' => function($q){
                 $q->with(['jenis_ujian:id,name', 'mapel:id,name', 'kelas:id,name', 'guru:id,nama'])->select('id', 'id_jenis_ujian', 'id_mapel', 'id_kelas', 'id_guru', 'from', 'to');
@@ -149,8 +149,8 @@ class ExamController extends Controller
                 $q->select('id', 'id_siswa', 'id_ujian', 'id_soal', 'jawaban_siswa', 'koreksi_jawaban',);
             }
         ])
-        ->where('id_ujian', $id)
-        ->where('id_jenis_soal', $jenis_soal)
+        ->where('id_ujian', $request->id)
+        ->where('id_jenis_soal', $request->type)
         ->orderBy('id', 'asc')
         ->get();
 
@@ -161,7 +161,7 @@ class ExamController extends Controller
         }
     }
 
-    public function detailQuestion($id){
+    public function detailQuestion(Request $request){
         $question = Soal::with([
             'ujian' => function($q){
                 $q->with(['jenis_ujian:id,name', 'mapel:id,name', 'kelas:id,name', 'guru:id,nama'])->select('id', 'id_jenis_ujian', 'id_mapel', 'id_kelas', 'id_guru', 'from', 'to');
@@ -170,8 +170,8 @@ class ExamController extends Controller
                 $q->select('id', 'id_soal', 'name');
             }
         ])
-        ->where('id', $id)
-        ->first();
+        ->where('id', $request->id)
+        ->get();
 
         if($question){
             return ['status' => 'success', 'data' => $question, 'message' => 'Success'];
@@ -277,11 +277,11 @@ class ExamController extends Controller
         }
     }
 
-    public function getExamResultsAnswer($id_siswa, $id_ujian, $id_soal){
+    public function getExamResultsAnswer(Request $request){
         $answer = HasilUjian::where([
-            'id_siswa' => $id_siswa,
-            'id_ujian' => $id_ujian,
-            'id_soal' => $id_soal,
+            'id_siswa' => $request->id_siswa,
+            'id_ujian' => $request->id_ujian,
+            'id_soal' => $request->id_soal,
         ])->first();
 
         if($answer){
