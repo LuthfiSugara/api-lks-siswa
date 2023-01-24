@@ -16,5 +16,6 @@ class DetailMateri extends Model
     protected $fillable = [
         'name',
         'id_materi',
+        'type',
     ];
 }

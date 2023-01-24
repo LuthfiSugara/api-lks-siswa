@@ -34,7 +34,11 @@ class Materi extends Model
         return $this->belongsTo(User::class, 'id_guru', 'id');
     }
 
-    public function detail(){
-        return $this->hasMany(DetailMateri::class, 'id_materi', 'id');
+    public function detail_image(){
+        return $this->hasMany(DetailMateri::class, 'id_materi', 'id')->where('type', 1);
+    }
+
+    public function detail_video(){
+        return $this->hasMany(DetailMateri::class, 'id_materi', 'id')->where('type', 2);
     }
 }

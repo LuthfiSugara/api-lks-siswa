@@ -54,8 +54,8 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     Route::get('materi', [MateriController::class, 'getMateri']);
     Route::get('detail-materi', [MateriController::class, 'detailMateri']);
     Route::post('add-materi', [MateriController::class, 'addMateri']);
-    Route::get('delete-detail-file-materi/{id}', [MateriController::class, 'deleteDetailFileMateri']);
     Route::post('update-materi', [MateriController::class, 'updateMateri']);
+    Route::get('delete-detail-file-materi/{id}', [MateriController::class, 'deleteDetailFileMateri']);
 
     Route::post('create-exam', [ExamController::class, 'createExam']);
     Route::get('detail-exam', [ExamController::class, 'detailExam']);

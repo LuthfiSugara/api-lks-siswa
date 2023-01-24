@@ -47,8 +47,11 @@ class MateriController extends Controller
             'guru' => function($q){
                 $q->select('id', 'nama');
             },
-            'detail' => function($q){
-                $q->select('id', 'name', 'id_materi');
+            'detail_image' => function($q){
+                $q->select('id', 'name', 'id_materi', 'type');
+            },
+            'detail_video' => function($q){
+                $q->select('id', 'name', 'id_materi', 'type');
             }
         ])
         ->orderBy('id', 'asc')
@@ -63,6 +66,7 @@ class MateriController extends Controller
     }
 
     public function addMateri(Request $request){
+        // return $request;
         $materi = new Materi;
         $materi->judul = $request->judul;
         $materi->keterangan = $request->keterangan;
@@ -71,9 +75,9 @@ class MateriController extends Controller
         $materi->id_guru = $request->id_guru;
         $materi->save();
 
+        $j = 0;
         if ($request->file) {
             $mapel = MataPelajaran::where('id', $request->id_mapel)->first();
-            $j = 0;
             foreach($request->file as $value){
                 $file_name = '/assets/materi/' . $mapel->name . '-' . $materi->judul . '-' . $j . '-' . time() . '.' . $value->getClientOriginalExtension();
                 $value->move(public_path('/assets/materi/'), $file_name);
@@ -81,6 +85,25 @@ class MateriController extends Controller
                 $detail = new DetailMateri;
                 $detail->name = $file_name;
                 $detail->id_materi = $materi->id;
+                $detail->type = 1;
+                $detail->save();
+
+                $j++;
+            }
+        }
+
+        $video = $request->video;
+        if ($video) {
+            $mapel = MataPelajaran::where('id', $request->id_mapel)->first();
+            
+            foreach($request->video as $value){
+                $file_name = '/assets/materi/' . $mapel->name . '-' . $materi->judul . '-' . $j . '-' . time() . '.' . $value->getClientOriginalExtension();
+                $value->move(public_path('/assets/materi/'), $file_name);
+
+                $detail = new DetailMateri;
+                $detail->name = $file_name;
+                $detail->id_materi = $materi->id;
+                $detail->type = 2;
                 $detail->save();
 
                 $j++;
@@ -90,14 +113,15 @@ class MateriController extends Controller
     }
 
     public function updateMateri(Request $request){
+        // return $request->all();
         $materi = Materi::where('id', $request->id)->first();
         $materi->judul = $request->judul;
         $materi->keterangan = $request->keterangan;
         $materi->save();
 
+        $j = 0;
         if ($request->file) {
             $mapel = MataPelajaran::where('id', $materi->id_mapel)->first();
-            $j = 0;
             foreach($request->file as $value){
                 $file_name = '/assets/materi/' . $mapel->name . '-' . $materi->judul . '-' . $j . '-' . time() . '.' . $value->getClientOriginalExtension();
                 $value->move(public_path('/assets/materi/'), $file_name);
@@ -105,11 +129,31 @@ class MateriController extends Controller
                 $detail = new DetailMateri;
                 $detail->name = $file_name;
                 $detail->id_materi = $materi->id;
+                $detail->type = 1;
                 $detail->save();
 
                 $j++;
             }
         }
+
+        $video = $request->video;
+        if ($video) {
+            $mapel = MataPelajaran::where('id', $materi->id_mapel)->first();
+            $j += 1;
+            foreach($request->video as $value){
+                $file_name = '/assets/materi/' . $mapel->name . '-' . $materi->judul . '-' . $j . '-' . time() . '.' . $value->getClientOriginalExtension();
+                $value->move(public_path('/assets/materi/'), $file_name);
+
+                $detail = new DetailMateri;
+                $detail->name = $file_name;
+                $detail->id_materi = $materi->id;
+                $detail->type = 2;
+                $detail->save();
+
+                $j++;
+            }
+        }
+
         return ['status' => "success", 'message' => 'Success'];
     }
 
