@@ -64,6 +64,8 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     Route::get('get-exam-questions', [ExamController::class, 'getExamQuestions']);
     Route::get('get-all-exam-base-on-type', [ExamController::class, 'getAllExamBaseOnType']);
     Route::get('delete-exam/{id}', [ExamController::class, 'deleteExam']);
+    Route::post('create-location-exam', [ExamController::class, 'createLocationExam']);
+    Route::get('get-location-exam', [ExamController::class, 'getLocationExam']);
 
     Route::get('detail-question', [ExamController::class, 'detailQuestion']);
     Route::post('update-question/{id}', [ExamController::class, 'updateQuestion']);

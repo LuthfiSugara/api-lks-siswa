@@ -8,6 +8,7 @@ use App\models\Soal;
 use App\models\DetailSoal;
 use App\models\HasilUjian;
 use App\models\NilaiSiswa;
+use App\models\LocationExam;
 
 class ExamController extends Controller
 {
@@ -347,6 +348,46 @@ class ExamController extends Controller
 
         if($update){
             return ['status' => 'success', 'data' => $update, 'message' => 'Success'];
+        }else{
+            return ['status' => 'fail', 'message' => 'Failed'];
+        }
+    }
+
+    public function createLocationExam(Request $request){
+        $checkLocation = LocationExam::where([
+            'id_ujian' => $request->id_ujian,
+            'id_siswa' => $request->id_siswa,
+            'id_location' => $request->id_location,
+        ])->first();
+
+        if($checkLocation){
+            return ['status' => 'success', 'data' => $checkLocation, 'message' => 'Success'];
+        }else{
+            $createLocation = LocationExam::create([
+                'id_ujian' => $request->id_ujian,
+                'id_siswa' => $request->id_siswa,
+                'id_location' => $request->id_location,
+            ]);
+        }
+
+
+        if($createLocation){
+            return ['status' => 'success', 'data' => $createLocation, 'message' => 'Success'];
+        }else{
+            return ['status' => 'fail', 'message' => 'Failed'];
+        }
+    }
+
+    public function getLocationExam(Request $request){
+        $location = LocationExam::with('detail')
+        ->where([
+            'id_ujian' => $request->id_ujian,
+            'id_siswa' => $request->id_siswa,
+        ])
+        ->first();
+
+        if($location){
+            return ['status' => 'success', 'data' => $location, 'message' => 'Success'];
         }else{
             return ['status' => 'fail', 'message' => 'Failed'];
         }

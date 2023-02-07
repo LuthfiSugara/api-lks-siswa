@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             JenisSoalSeeder::class,
             JenisUjianSeeder::class,
+            LocationSeeder::class,
         ]);
     }
 }
