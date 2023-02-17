@@ -384,6 +384,7 @@ class ExamController extends Controller
             'id_ujian' => $request->id_ujian,
             'id_siswa' => $request->id_siswa,
         ])
+        ->orderBy('created_at', 'desc')
         ->first();
 
         if($location){
