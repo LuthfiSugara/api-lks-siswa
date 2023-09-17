@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\models\MataPelajaran;
+use App\Models\MataPelajaran;
 
 class MataPelajaranSeeder extends Seeder
 {

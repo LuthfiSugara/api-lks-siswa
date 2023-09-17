@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\models\JenisSoal;
+use App\Models\JenisSoal;
 
 class JenisSoalSeeder extends Seeder
 {

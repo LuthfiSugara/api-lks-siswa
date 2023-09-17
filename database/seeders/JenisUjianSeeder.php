@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\models\JenisUjian;
+use App\Models\JenisUjian;
 
 class JenisUjianSeeder extends Seeder
 {
