@@ -109,7 +109,7 @@ class UserController extends Controller
             return ['status' => "fail", 'message' => 'Username atau Password Salah'];
         }else{
             if($user && Hash::check($request->password, $user->password)){
-                $token = $user->createToken($request->device_name)->plainTextToken;
+                $token = $user->createToken('android')->plainTextToken;
                 return ['status' => "success", 'access_token' => $token, 'data' => $user];
             }else{
                 return ['status' => "fail", 'message' => 'Password Salah'];

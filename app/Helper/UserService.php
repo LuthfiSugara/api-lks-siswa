@@ -42,7 +42,7 @@ class userService {
                 'password' => Hash::make($this->password)
             ]);
 
-            $token = $user->createToken($deviceName)->plainTextToken;
+            $token = $user->createToken('android')->plainTextToken;
             return ['status' => true, 'token' => $token, 'user' => $user];
         }
     }
@@ -55,7 +55,7 @@ class userService {
             return ['status' => false, 'messages' => 'User tidak terdaftar'];
         }else{
             if($user){
-                $token = $user->createToken($deviceName)->plainTextToken;
+                $token = $user->createToken('android')->plainTextToken;
                 return ['status' => true, 'access_token' => $token, 'data' => $user];
             }else{
                 return ['status' => false, 'messages' => 'Password Salah'];
