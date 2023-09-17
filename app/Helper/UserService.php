@@ -5,7 +5,7 @@ namespace App\Helper;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
-use App\models\User;
+use App\Models\User;
 
 class userService {
     public $email, $password;

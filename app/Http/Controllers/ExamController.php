@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\models\Ujian;
-use App\models\Soal;
-use App\models\DetailSoal;
-use App\models\HasilUjian;
-use App\models\NilaiSiswa;
-use App\models\LocationExam;
+use App\Models\Ujian;
+use App\Models\Soal;
+use App\Models\DetailSoal;
+use App\Models\HasilUjian;
+use App\Models\NilaiSiswa;
+use App\Models\LocationExam;
 
 class ExamController extends Controller
 {

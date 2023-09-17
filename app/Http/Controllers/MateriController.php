@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\models\Materi;
-use App\models\DetailMateri;
-use App\models\MataPelajaran;
+use App\Models\Materi;
+use App\Models\DetailMateri;
+use App\Models\MataPelajaran;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 

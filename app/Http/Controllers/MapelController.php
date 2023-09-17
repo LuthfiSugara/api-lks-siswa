@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\models\MataPelajaran;
+use App\Models\MataPelajaran;
 
 class MapelController extends Controller
 {

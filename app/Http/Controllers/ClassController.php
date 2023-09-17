@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\models\Kelas;
-use App\models\DetailKelasUser;
+use App\Models\Kelas;
+use App\Models\DetailKelasUser;
 
 class ClassController extends Controller
 {

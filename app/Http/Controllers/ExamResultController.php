@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\models\Ujian;
-use App\models\NilaiSiswa;
-use App\models\HasilUjian;
+use App\Models\NilaiSiswa;
+use App\Models\HasilUjian;
 
 class ExamResultController extends Controller
 {

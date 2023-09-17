@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\models\Kelas;
-use App\models\JenisKelamin;
-use App\models\Jabatan;
-use App\models\MataPelajaran;
+use App\Models\Kelas;
+use App\Models\JenisKelamin;
+use App\Models\Jabatan;
+use App\Models\MataPelajaran;
 
 class SettingController extends Controller
 {
